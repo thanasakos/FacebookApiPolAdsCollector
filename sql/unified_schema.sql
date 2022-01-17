@@ -109,10 +109,16 @@ CREATE TABLE page_name_history (
   CONSTRAINT page_id_fk FOREIGN KEY (page_id) REFERENCES pages (page_id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
   CONSTRAINT unique_id_and_name UNIQUE(page_id, page_name)
 );
+CREATE TABLE snapshot_fetch_batches (
+  batch_id bigserial PRIMARY KEY,
+  time_started timestamp with time zone,
+  time_completed timestamp with time zone,
+  last_modified_time timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
 CREATE TABLE ad_snapshot_metadata (
   archive_id bigint NOT NULL,
   needs_scrape boolean DEFAULT TRUE,
-  snapshot_fetch_time timestamp with timezone,
+  snapshot_fetch_time timestamp with time zone,
   snapshot_fetch_status int,
   snapshot_fetch_batch_id bigint,
   last_modified_time timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -194,12 +200,6 @@ CREATE TABLE region_impression_results (
   spend_estimate numeric(10,2),
   CONSTRAINT archive_id_fk FOREIGN KEY (archive_id) REFERENCES ads (archive_id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
   CONSTRAINT unique_region_results UNIQUE(archive_id, region)
-);
-CREATE TABLE snapshot_fetch_batches (
-  batch_id bigserial PRIMARY KEY,
-  time_started timestamp with time zone,
-  time_completed timestamp with time zone,
-  last_modified_time timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
 );
 
 CREATE TABLE ad_ids (
