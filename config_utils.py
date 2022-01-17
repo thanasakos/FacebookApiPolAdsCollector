@@ -61,7 +61,7 @@ def get_database_connection(database_connection_params, retry=True):
     """
     db_authorize = (
         "host=%(host)s dbname=%(database_name)s user=%(username)s password=%(password)s "
-        "port=%(port)s sslmode=require") % database_connection_params._asdict()
+        "port=%(port)s sslmode=disable") % database_connection_params._asdict() #DISABLED SSL BUT SHOULD BE REVERTED TO NORMAL 
     if database_connection_params.default_schema:
         db_authorize += (
             ' options=-csearch_path=%(default_schema)s' % database_connection_params._asdict())

@@ -603,11 +603,13 @@ def get_pages_from_archive(archive_path):
         return page_ads
     with open(archive_path) as csvfile:
         reader = csv.DictReader(csvfile)
+
         for row in reader:
-            if row["\ufeffPage ID"] in page_ads:
-                page_ads[row["\ufeffPage ID"]] += row["Number of Ads in Library"]
+            print(row)
+            if row["Page ID"] in page_ads:
+                page_ads[row["Page ID"]] += row.get("Number of Ads in Library",0)
             else:
-                page_ads[row["\ufeffPage ID"]] = row["Number of Ads in Library"]
+                page_ads[row["Page ID"]] = row.get("Number of Ads in Library",0)
 
     return page_ads
 
@@ -661,7 +663,7 @@ def get_stop_at_datetime(stop_at_time_str):
 
 def main(config):
     logging.info("starting")
-
+    page_delta = {} #THANOS ADDITION
     slack_url_info_channel = config.get('LOGGING', 'SLACK_URL_INFO_CHANNEL', fallback='')
     slack_url_error_channel = config.get('LOGGING', 'SLACK_URL_ERROR_CHANNEL', fallback='')
 
@@ -716,7 +718,8 @@ def main(config):
                 else:
                     page_delta[page_id] = ad_count
 
-            prioritized_page_ids = [x for x in sorted(page_delta, key=d.get, reverse=True)]
+            # prioritized_page_ids = [x for x in sorted(page_delta, key=d.get, reverse=True)]
+            prioritized_page_ids = [x for x in sorted(page_delta, reverse=True)] #THANOS ADDITION
             #LAE - alter this to work for up to 10 page ids at a time
             for page_id in prioritized_page_ids:
                 search_runner.run_search(page_id=page_id)
